@@ -1,0 +1,350 @@
+html, body{
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.container{
+    width: 95dvw;
+    max-width: 1786px;
+    height: 100dvh;
+    margin: 0 auto;
+
+    overflow: hidden;
+    padding: 0 10px;
+}
+
+header{
+    height: 100px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    margin-top: 38px;
+}
+
+header .logo{
+    display: flex;
+}
+
+header .logo img{
+    width: 180px;
+    height: 100px;
+}
+
+header .adding_new_task{
+    padding: 20px 0;
+
+    color: #5A5C63;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: center;
+}
+
+header .plus{
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.adding_new_task{
+    cursor: pointer;
+}
+
+main{
+    display: flex;
+    justify-content: space-evenly;
+    gap: 50px;
+    margin: 0 auto;
+
+    height: 100%;
+}
+
+main > div{
+    width: 33%;
+}
+
+main .info{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-radius: 5px;
+    width: 376px;
+    height: 34px;
+}
+
+main .info p{
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 21px;
+    text-align: center;
+
+    margin-left: 10px;
+}
+
+main .info .counter{
+    width: 20px;
+    height: 20px;
+    
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+
+    margin-right: 10px;
+    border-radius: 3px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main .todo .info{
+    background-color: #00A6DA;
+}
+
+main .todo .counter{
+    background-color: rgba(0, 205, 218, 1)
+}
+
+main .doing .info{
+    background-color: rgba(204, 172, 3, 0.56);
+}
+
+main .doing .counter{
+    background-color: rgba(218, 183, 0, 1);
+}
+
+main .finished .info{
+    background-color: rgba(59, 192, 87, 1);
+}
+
+main .finished .counter{
+    background-color: rgba(105, 206, 126, 1);
+}
+
+main .blocked .info{
+    background: rgba(231, 76, 60, 1);
+}
+
+main .blocked .counter{
+    background: rgba(231, 76, 60, 1);
+}
+
+main .separator{
+    width: 100%;
+    margin: 10px 0px;
+}
+
+main .todo .separator{
+    border: solid 1px rgba(0, 166, 218, 1);
+}
+
+main .doing .separator{
+    border: solid 1px rgba(218, 183, 0, 1);
+}
+
+main .finished .separator{
+    border: solid 1px rgba(59, 192, 87, 1);
+}
+
+main .blocked .separator{
+    border: solid 1px rgba(59, 192, 87, 1);
+}
+
+ul{
+    padding: 0px;
+    margin: 0px;
+
+    max-height: 619px;
+    height: 70%;
+
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+ul::-webkit-scrollbar{
+    display: none;
+}
+
+main > div li{
+    min-height: 216px;
+
+    list-style: none;
+    width: calc(100% - 5px);
+    height: 100px;
+    border: solid 1px green;
+    margin: 0px auto;
+    padding: 0px;
+}
+
+main div .info{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+main li .top_section, main li .bottom_section{
+    margin: 0 10px;
+}
+
+main li .top_section{
+    width: calc(100% - 20px);
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 10px;
+    border-bottom: solid 1px rgba(219, 219, 219, 1);
+    padding-bottom: 30px;
+}
+
+main li .title{
+    width: 80%;
+}
+
+main li .title .category{
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    color: rgba(77, 142, 255, 1);
+    text-decoration: underline;
+}
+
+main li .title .title_content{
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 20.16px;
+    text-align: left;
+
+    color: rgba(57, 57, 57, 1);
+}
+
+main li .bottom_section{
+    margin-top: 10px;   
+    margin-bottom: 20px;
+}
+
+main li .bottom_section .content{
+    height: 28px;
+    overflow: scroll;
+
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 12.6px;
+    text-align: left;
+
+    color: rgba(90, 92, 99, 1);
+}
+
+main li .bottom_section .time{
+    display: flex;
+    align-items: flex-end;
+}
+
+main li .time .clock svg{
+    width: 12px;
+    height: 12px;
+}
+
+main li .time .time_content{
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 12.6px;
+    text-align: left;
+    margin-bottom: 2px;
+    margin-left: 4px;
+
+    color: rgba(90, 92, 99, 1);
+}
+
+.edit_pop_up{
+    position: fixed;
+    top: calc(50% - 150px); 
+    left: calc(50% - 250px);
+    width: 500px;
+    height: 300px;
+
+    background-color: white;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid black;
+}
+
+.edit_pop_up header{
+    width: 200px;
+    margin: 0 auto;
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+}
+
+.edit_pop_up h1{
+    width: fit-content;
+
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 25px;
+    text-align: center;
+    display: flex;
+    color: rgba(57, 57, 57, 1);
+}
+
+.edit_pop_up .close{
+    position: absolute;
+    right: 15px;
+    top: 10px;
+
+    font-size: 20px;
+    text-align: center;
+}
+
+.edit_pop_up .status_state{
+    display: flex;
+}
+
+.new_task_pop_up{
+    position: fixed;
+    top: calc(50% - 150px); 
+    left: calc(50% - 250px);
+    width: 500px;
+    height: 300px;
+
+    background-color: white;
+    align-items: center;
+    display: none;
+    flex-direction: column;
+
+    border: 1px solid black;
+}
+
+.new_task_pop_up header{
+    width: 400px;
+    margin: 0 auto;
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+}
+
+.new_task_pop_up h1{
+    width: fit-content;
+}
+
+.new_task_pop_up .close{
+    position: absolute;
+    right: 15px;
+    top: 10px;
+
+    cursor: pointer;
+}
