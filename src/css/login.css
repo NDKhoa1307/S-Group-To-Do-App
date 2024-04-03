@@ -1,0 +1,226 @@
+* {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  overflow: hidden;
+}
+
+.container {
+  width: 1280px;
+  height: 1024px;
+
+  max-width: 100%;
+  max-height: 100%;
+
+  position: relative;
+  margin-top: calc(50dvh - 512px);
+  transform: scale(0.75);
+}
+
+.background_images {
+  position: relative;
+  height: 100%;
+}
+
+.top_right {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  width: 500.51px;
+  height: 592px;
+
+  gap: 0px;
+  opacity: 0px;
+}
+
+.bottom_left {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 569px;
+  height: 588.17px;
+
+  gap: 0px;
+  opacity: 0px;
+}
+
+.circle {
+  position: absolute;
+  top: 83%;
+  left: 78%;
+
+  width: 79.17px;
+  height: 79px;
+  gap: 0px;
+  opacity: 0px;
+}
+
+.main_login {
+  position: absolute;
+
+  width: 1024px;
+  height: 700px;
+
+  top: calc(50% - 350px);
+  left: calc(50% - 512px);
+
+  background-color: white;
+  border-radius: 25px;
+  box-shadow: 0px 1px 13px 0px rgba(0, 0, 0, 0.18);
+
+  display: flex;
+}
+
+.side_pic {
+  width: 506px;
+  height: 700px;
+  gap: 0px;
+  opacity: 0px;
+}
+
+.right_side {
+  width: 506px;
+  height: 700px;
+  gap: 0px;
+  opacity: 0px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login_container {
+  width: 278px;
+  height: 336px;
+  gap: 40px;
+  opacity: 0px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login_container header {
+  width: 278px;
+  height: 38px;
+
+  display: flex;
+  justify-content: center;
+}
+
+.login_container header span {
+  width: 139px;
+  max-height: 26px;
+  gap: 0px;
+  opacity: 0px;
+
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.login_container header span:nth-child(1) {
+  border-bottom: 2px solid rgba(17, 105, 142, 1);
+}
+
+.login_form {
+  margin-top: -20px;
+}
+
+.login_form .email,
+.login_form .password {
+  width: 278px;
+  height: 68px;
+}
+
+.login_form .email h1,
+.login_form .password h1 {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  text-align: left;
+
+  color: rgba(57, 63, 68, 1);
+  margin-bottom: 2px;
+}
+
+.login_form .email input,
+.login_form .password input {
+  width: 278px;
+  height: 38px;
+
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  padding: 0px 7px;
+}
+
+.login_form .remember {
+  margin: 10px 0px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.login_form .remember label {
+  font-family: "Roboto", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.login_form .remember input {
+  accent-color: rgb(0, 166, 218);
+  width: 16px;
+  height: 16px;
+}
+
+.login_button button {
+  cursor: pointer;
+  margin-top: 12px;
+
+  width: 278px;
+  height: 38px;
+  padding: 8px 15px 8px 15px;
+  gap: 8px;
+  border-radius: 41px;
+  border: 0px;
+
+  background-color: rgba(0, 166, 218, 1);
+
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: center;
+
+  color: white;
+}
+
+.email span,
+.password span {
+  color: red;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 10px;
+  text-align: left;
+
+  margin-top: 3px;
+
+  position: absolute;
+}
