@@ -1,7 +1,7 @@
 function editPopUp(status) {
   return `<div class="edit_pop_up">
       <header>
-        <h1>Edit state</h1>
+        <h1>Edit task</h1>
         <div class="close">x</div>
       </header>
       <input type="text" class="category_input"/>
@@ -56,7 +56,7 @@ function editPopUp(status) {
 function newTaskPopUp() {
   return `<div class="new_task_pop_up">
       <header>
-        <h1>Adding new task</h1>
+        <h1>Add new todo</h1>
         <span class="close">x</span>
       </header>
       <input type="text" class="category_input" placeholder = "Category. e.g: Marketing,..."/>

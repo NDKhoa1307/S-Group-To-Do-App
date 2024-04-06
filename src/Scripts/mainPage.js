@@ -13,6 +13,26 @@ finishedTasks = finishedTasks.filter((task) => task !== null);
 var blockedTasks = JSON.parse(localStorage.getItem("blockedTasks")) || [];
 blockedTasks = blockedTasks.filter((task) => task !== null);
 
+// Render counter
+const renderCounter = () => {
+  const todo_counter = document.querySelector(".todo .counter");
+  const doing_counter = document.querySelector(".doing .counter");
+  const finished_counter = document.querySelector(".finished .counter");
+  const blocked_counter = document.querySelector(".blocked .counter");
+
+  let todoTasks = JSON.parse(localStorage.getItem("todoTasks")) || [];
+  let doingTasks = JSON.parse(localStorage.getItem("doingTasks")) || [];
+  let finishedTasks = JSON.parse(localStorage.getItem("finishedTasks")) || [];
+  let blockedTasks = JSON.parse(localStorage.getItem("blockedTasks")) || [];
+
+  todo_counter.textContent = todoTasks.length;
+  doing_counter.textContent = doingTasks.length;
+  finished_counter.textContent = finishedTasks.length;
+  blocked_counter.textContent = blockedTasks.length;
+};
+
+renderCounter();
+
 const renderRemoveButton = (status) => {
   let taskList = JSON.parse(localStorage.getItem(`${status}Tasks`)) || [];
   const tasks = document.querySelectorAll(`.${status} li`);
@@ -34,12 +54,14 @@ const renderRemoveButton = (status) => {
           task.time.trim() !== time.trim()
       );
       task.remove();
+      renderCounter();
       localStorage.setItem(`${status}Tasks`, JSON.stringify(taskList));
     });
   });
 };
 
 const renderEditButtons = (status) => {
+  // Get tasklist from local storage
   let taskList =
     JSON.parse(localStorage.getItem(`${status}Tasks`)).filter(
       (task) => task !== null
@@ -53,8 +75,11 @@ const renderEditButtons = (status) => {
   tasks.forEach((task) => {
     const edit_button = task.querySelector(".Edit");
     edit_button.style.cursor = "pointer";
-    edit_button.addEventListener("click", () => {
-      if (document.querySelector(".edit_pop_up")) {
+    edit_button.addEventListener("click", async () => {
+      if (
+        document.querySelector(".new_task_pop_up") ||
+        document.querySelector(".edit_pop_up")
+      ) {
         return;
       }
 
@@ -168,6 +193,7 @@ const renderEditButtons = (status) => {
           new_status_list.insertAdjacentHTML("beforeend", new_task);
           renderRemoveButton(new_status);
           renderEditButtons(new_status);
+          renderCounter();
 
           return;
         }
@@ -177,6 +203,12 @@ const renderEditButtons = (status) => {
       });
 
       // Closing the pop up
+      document.addEventListener("click", (e) => {
+        if (!edit_pop_up.contains(e.target) && e.target !== edit_button) {
+          edit_pop_up.remove();
+        }
+      });
+
       const close_button = document.querySelector(".edit_pop_up .close");
       close_button.style.cursor = "pointer";
       close_button.addEventListener("click", () => {
@@ -250,6 +282,7 @@ const checkValidInput = (pop_up) => {
     });
     renderRemoveButton("doing");
     renderEditButtons("doing");
+    renderCounter();
   }
 
   // Render finished tasks
@@ -266,6 +299,7 @@ const checkValidInput = (pop_up) => {
     });
     renderRemoveButton("finished");
     renderEditButtons("finished");
+    renderCounter();
   }
 
   // Render blocked tasks
@@ -282,12 +316,13 @@ const checkValidInput = (pop_up) => {
     });
     renderRemoveButton("blocked");
     renderEditButtons("blocked");
+    renderCounter();
   }
 })();
 
 const new_task_button = document.querySelector(".adding_new_task");
 new_task_button.addEventListener("click", () => {
-  if (document.querySelector(".new_task_pop_up", "edit_pop_up")) {
+  if (document.querySelector(".edit_pop_up", ".new_task_pop_up")) {
     return;
   }
 
@@ -295,6 +330,11 @@ new_task_button.addEventListener("click", () => {
   main.insertAdjacentHTML("beforeend", newTaskPopUp());
   const new_task_pop_up = document.querySelector(".new_task_pop_up");
   new_task_pop_up.style.display = "flex";
+  document.addEventListener("click", (e) => {
+    if (!new_task_pop_up.contains(e.target) && e.target !== new_task_button) {
+      new_task_pop_up.remove();
+    }
+  });
 
   const close_button = document.querySelector(".new_task_pop_up .close");
   close_button.addEventListener("click", () => {
@@ -332,5 +372,68 @@ new_task_button.addEventListener("click", () => {
     new_task_pop_up.remove();
     renderRemoveButton("todo");
     renderEditButtons("todo");
+    renderCounter();
   });
+});
+
+// Drag and drop elements for normal size window
+const dragNormalElem = (elem) => {
+  let dragElement = (elem) => {
+    let pos1 = 0,
+    pos2 = 0,
+    pos3 = 0,
+    pos4 = 0;
+    elem.onmousedown = mouseDown;
+    elem.style.backgroundColor = "white";
+    
+    function mouseDown(e) {
+      elem.style.maxWidth = "371px";
+      elem.style.position = "absolute";
+      e = e || window.event;
+      e.preventDefault();
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      elem.style.top = pos3;
+      elem.style.left = pos4;
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      elem.style.top = elem.offsetTop - pos2 + "px";
+      elem.style.left = elem.offsetLeft - pos1 + "px";
+    }
+
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+      elem.style.removeProperty("max-width");
+      elem.style.position = "relative";
+      elem.style.removeProperty("top");
+      elem.style.removeProperty("left");
+      elem.style.backgroundColor = "white";
+    }
+  };
+
+  dragElement(elem);
+};
+
+window.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth > 768) {
+    const todo_tasks = document.querySelectorAll(".todo li");
+    const doing_tasks = document.querySelectorAll(".doing li");
+    const finished_tasks = document.querySelectorAll(".finished li");
+    const blocked_tasks = document.querySelectorAll(".blocked li");
+
+    todo_tasks.forEach((task) => dragNormalElem(task));
+    doing_tasks.forEach((task) => dragNormalElem(task));
+    finished_tasks.forEach((task) => dragNormalElem(task));
+    blocked_tasks.forEach((task) => dragNormalElem(task));
+  }
 });

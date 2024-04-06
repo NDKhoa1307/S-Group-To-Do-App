@@ -42,9 +42,6 @@ const validate_password = () => {
   }
 };
 
-validate_email();
-validate_password();
-
 email_input.addEventListener("blur", () => {
   email_flag = validate_email();
 });
