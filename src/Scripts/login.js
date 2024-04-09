@@ -67,22 +67,24 @@ login_button.addEventListener("click", async () => {
         password: password,
       }),
     });
+
+    
     const data = await response.json();
     const message = data.message;
     const status = data.status;
 
     if (status == 'error'){
-        const status = document.querySelector(".login_button span");
-        status.innerHTML = "Wrong username or password!";
+      const status = document.querySelector(".login_button span");
+      status.innerHTML = "Wrong username or password!";
 
-        const email_input = document.querySelector(".email input");
-        const password_input = document.querySelector(".password input");
+      const email_input = document.querySelector(".email input");
+      const password_input = document.querySelector(".password input");
 
-        email_input.style.border = "1px solid red";
-        password_input.style.border = "1px solid red";
+      email_input.style.border = "1px solid red";
+      password_input.style.border = "1px solid red";
     }
     else{
-        window.location.href = './mainPage.html'
+      window.location.href = './mainPage.html'
     }
   }
 });

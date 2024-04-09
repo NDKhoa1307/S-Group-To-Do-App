@@ -561,7 +561,7 @@ const dragMobileElem = (elem, status) => {
 };
 
 window.addEventListener("DOMContentLoaded", () => {
-  if (window.innerWidth > 1024) {
+  if (window.innerWidth >= 1024) {
     const todo_tasks = document.querySelectorAll(".todo li");
     const doing_tasks = document.querySelectorAll(".doing li");
     const finished_tasks = document.querySelectorAll(".finished li");
@@ -570,7 +570,7 @@ window.addEventListener("DOMContentLoaded", () => {
     todo_tasks.forEach((task) => dragNormalElem(task, "todo"));
     doing_tasks.forEach((task) => dragNormalElem(task, "doing"));
     finished_tasks.forEach((task) => dragNormalElem(task, "finished"));
-    blocked_tasks.forEach((task) => dragNormalElem(task, "blocked"));
+    blocked_tasks.forEach((task) => dragNormalElem(task, "blocked")); 
   } else {
     const todo_tasks = document.querySelectorAll(".todo li");
     const doing_tasks = document.querySelectorAll(".doing li");
@@ -585,7 +585,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("resize", () => {
-  if (window.innerWidth > 1024) {
+  if (window.innerWidth >= 1024) {
     const todo_tasks = document.querySelectorAll(".todo li");
     const doing_tasks = document.querySelectorAll(".doing li");
     const finished_tasks = document.querySelectorAll(".finished li");
@@ -595,12 +595,13 @@ window.addEventListener("resize", () => {
     doing_tasks.forEach((task) => dragNormalElem(task, "doing"));
     finished_tasks.forEach((task) => dragNormalElem(task, "finished"));
     blocked_tasks.forEach((task) => dragNormalElem(task, "blocked"));
-  } else {
+  }
+  else{
     const todo_tasks = document.querySelectorAll(".todo li");
     const doing_tasks = document.querySelectorAll(".doing li");
     const finished_tasks = document.querySelectorAll(".finished li");
     const blocked_tasks = document.querySelectorAll(".blocked li");
-
+    
     todo_tasks.forEach((task) => dragMobileElem(task, "todo"));
     doing_tasks.forEach((task) => dragMobileElem(task, "doing"));
     finished_tasks.forEach((task) => dragMobileElem(task, "finished"));
