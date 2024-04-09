@@ -54,12 +54,14 @@ const renderRemoveButton = (status) => {
           task.time.trim() !== time.trim()
       );
       task.remove();
-      renderCounter();
       localStorage.setItem(`${status}Tasks`, JSON.stringify(taskList));
+
+      renderCounter();
     });
   });
 };
 
+// Render edit buttons
 const renderEditButtons = (status) => {
   // Get tasklist from local storage
   let taskList =
@@ -195,6 +197,11 @@ const renderEditButtons = (status) => {
           renderEditButtons(new_status);
           renderCounter();
 
+          const new_status_tasks = document.querySelectorAll(
+            `.${new_status} li`
+          );
+          new_status_tasks.forEach((task) => dragNormalElem(task, new_status));
+
           return;
         }
 
@@ -209,6 +216,12 @@ const renderEditButtons = (status) => {
         }
       });
 
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          edit_pop_up.remove();
+        }
+      });
+
       const close_button = document.querySelector(".edit_pop_up .close");
       close_button.style.cursor = "pointer";
       close_button.addEventListener("click", () => {
@@ -218,6 +231,7 @@ const renderEditButtons = (status) => {
   });
 };
 
+// Check if the input is valid
 const checkValidInput = (pop_up) => {
   const category_input = pop_up.querySelector(".category_input");
   const title_input = pop_up.querySelector(".title_input");
@@ -267,6 +281,7 @@ const checkValidInput = (pop_up) => {
     });
     renderRemoveButton("todo");
     renderEditButtons("todo");
+    renderCounter();
   }
   // Render doing tasks
   if (doingTasks.length > 0) {
@@ -336,11 +351,6 @@ new_task_button.addEventListener("click", () => {
     }
   });
 
-  const close_button = document.querySelector(".new_task_pop_up .close");
-  close_button.addEventListener("click", () => {
-    new_task_pop_up.remove();
-  });
-
   const submit_button = document.querySelector(".new_task_pop_up .sumbit");
   submit_button.addEventListener("click", () => {
     const validation = checkValidInput(new_task_pop_up);
@@ -373,67 +383,227 @@ new_task_button.addEventListener("click", () => {
     renderRemoveButton("todo");
     renderEditButtons("todo");
     renderCounter();
+    const todo_tasks = document.querySelectorAll(".todo li");
+    todo_tasks.forEach((task) => dragNormalElem(task, "todo"));
+  });
+
+  // Closing the pop up
+  const close_button = document.querySelector(".new_task_pop_up .close");
+  close_button.addEventListener("click", () => {
+    new_task_pop_up.remove();
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      new_task_pop_up.remove();
+    }
   });
 });
 
 // Drag and drop elements for normal size window
-const dragNormalElem = (elem) => {
+const dragNormalElem = (elem, status) => {
+  // Wipe mobile drag function
+  elem.mouseDown = null;
   let dragElement = (elem) => {
     let pos1 = 0,
-    pos2 = 0,
-    pos3 = 0,
-    pos4 = 0;
-    elem.onmousedown = mouseDown;
+      pos2 = 0,
+      pos3 = 0,
+      pos4 = 0;
+
+    elem.onmousedown = (event) => {
+      if (elem.querySelector(".edit").contains(event.target)) {
+        return;
+      }
+      return mouseDown(event);
+    };
+    // elem.onmousedown = mouseDown;
+
     elem.style.backgroundColor = "white";
-    
-    function mouseDown(e) {
-      elem.style.maxWidth = "371px";
-      elem.style.position = "absolute";
-      e = e || window.event;
-      e.preventDefault();
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      elem.style.top = pos3;
-      elem.style.left = pos4;
-      document.onmouseup = closeDragElement;
+
+    // Mouse down event
+    function mouseDown(event) {
+      event = event || window.event;
+      event.preventDefault();
+      pos3 = event.clientX;
+      pos4 = event.clientY;
+
+      elem.style.maxWidth = `${elem.offsetWidth}px`;
+      elem.style.position = "fixed";
+      elem.style.top = pos4 - elem.offsetHeight / 2 + "px";
+      elem.style.left = pos3 - elem.offsetWidth / 2 + "px";
+      elem.style.zIndex = "1";
+
+      document.onmouseup = mouseUp;
       document.onmousemove = elementDrag;
     }
 
-    function elementDrag(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
+    // Element drag event
+    function elementDrag(event) {
+      event = event || window.event;
+      event.preventDefault();
+      pos1 = pos3 - event.clientX;
+      pos2 = pos4 - event.clientY;
+      pos3 = event.clientX;
+      pos4 = event.clientY;
       elem.style.top = elem.offsetTop - pos2 + "px";
       elem.style.left = elem.offsetLeft - pos1 + "px";
     }
 
-    function closeDragElement() {
+    // Mouse up event
+    function mouseUp() {
       document.onmouseup = null;
       document.onmousemove = null;
+
+      // Get bounding boxes dimension of elements
+      const todo_list = document.querySelector(".todo");
+      const doing_list = document.querySelector(".doing");
+      const finished_list = document.querySelector(".finished");
+      const blocked_list = document.querySelector(".blocked");
+
+      if (pos3 < window.innerWidth / 2) {
+        const todo_list_rect = todo_list.getBoundingClientRect();
+        const doing_list_rect = doing_list.getBoundingClientRect();
+        const middle_section =
+          todo_list_rect.right +
+          (doing_list_rect.left - todo_list_rect.right) / 2;
+        if (pos3 <= middle_section) {
+          var new_status = "todo";
+        } else {
+          var new_status = "doing";
+        }
+      } else {
+        const finished_list_rect = finished_list.getBoundingClientRect();
+        const blocked_list_rect = blocked_list.getBoundingClientRect();
+        const middle_section =
+          finished_list_rect.right +
+          (blocked_list_rect.left - finished_list_rect.right) / 2;
+        if (pos3 >= middle_section) {
+          var new_status = "blocked";
+        } else {
+          var new_status = "finished";
+        }
+      }
+
+      if (status !== new_status) {
+        // Get the tasklist from local storage
+        let taskList = JSON.parse(localStorage.getItem(`${status}Tasks`)) || [];
+
+        // Get the task content
+        const category = elem.querySelector(".category").textContent;
+        const title_content = elem.querySelector(".title_content").textContent;
+        const content = elem.querySelector(".content").textContent;
+        const time = elem.querySelector(".time").textContent;
+
+        // Remove the task from the current status
+        taskList = taskList.filter(
+          (task) =>
+            task.category !== category ||
+            task.title_content !== title_content ||
+            task.content !== content ||
+            task.time.trim() !== time.trim()
+        );
+        localStorage.setItem(`${status}Tasks`, JSON.stringify(taskList));
+
+        // Add the task to the new status
+        const new_status_taskList =
+          JSON.parse(localStorage.getItem(`${new_status}Tasks`)) || [];
+
+        new_status_taskList.push({
+          category: category,
+          title_content: title_content,
+          content: content,
+          time: time.trim(),
+        });
+
+        // Update the local storage
+        localStorage.setItem(
+          `${new_status}Tasks`,
+          JSON.stringify(new_status_taskList)
+        );
+
+        // Remove the task from the current status
+        elem.remove();
+
+        // Adding the task to the new status
+        const new_status_list = document.querySelector(`.${new_status} ul`);
+        const new_task = Task(category, title_content, content, time);
+        new_status_list.insertAdjacentHTML("beforeend", new_task);
+      }
+
+      // Reset mouseDown properties
+      const new_status_tasks = document.querySelectorAll(`.${new_status} li`);
+      new_status_tasks.forEach((task) => dragNormalElem(task, new_status));
+
+      // Render buttons
+      renderCounter();
+      renderEditButtons(new_status);
+      renderRemoveButton(new_status);
+
+      // Reset the properties set on mouseDown
       elem.style.removeProperty("max-width");
       elem.style.position = "relative";
       elem.style.removeProperty("top");
       elem.style.removeProperty("left");
       elem.style.backgroundColor = "white";
+      elem.style.zIndex = "0";
     }
   };
 
   dragElement(elem);
+  renderCounter();
+  renderEditButtons(status);
+  renderRemoveButton(status);
+};
+
+const dragMobileElem = (elem, status) => {
+  // Wipe normal drag function
+  elem.mouseDown = null;
 };
 
 window.addEventListener("DOMContentLoaded", () => {
-  if (window.innerWidth > 768) {
+  if (window.innerWidth > 1024) {
     const todo_tasks = document.querySelectorAll(".todo li");
     const doing_tasks = document.querySelectorAll(".doing li");
     const finished_tasks = document.querySelectorAll(".finished li");
     const blocked_tasks = document.querySelectorAll(".blocked li");
 
-    todo_tasks.forEach((task) => dragNormalElem(task));
-    doing_tasks.forEach((task) => dragNormalElem(task));
-    finished_tasks.forEach((task) => dragNormalElem(task));
-    blocked_tasks.forEach((task) => dragNormalElem(task));
+    todo_tasks.forEach((task) => dragNormalElem(task, "todo"));
+    doing_tasks.forEach((task) => dragNormalElem(task, "doing"));
+    finished_tasks.forEach((task) => dragNormalElem(task, "finished"));
+    blocked_tasks.forEach((task) => dragNormalElem(task, "blocked"));
+  } else {
+    const todo_tasks = document.querySelectorAll(".todo li");
+    const doing_tasks = document.querySelectorAll(".doing li");
+    const finished_tasks = document.querySelectorAll(".finished li");
+    const blocked_tasks = document.querySelectorAll(".blocked li");
+
+    todo_tasks.forEach((task) => dragMobileElem(task, "todo"));
+    doing_tasks.forEach((task) => dragMobileElem(task, "doing"));
+    finished_tasks.forEach((task) => dragMobileElem(task, "finished"));
+    blocked_tasks.forEach((task) => dragMobileElem(task, "blocked"));
+  }
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 1024) {
+    const todo_tasks = document.querySelectorAll(".todo li");
+    const doing_tasks = document.querySelectorAll(".doing li");
+    const finished_tasks = document.querySelectorAll(".finished li");
+    const blocked_tasks = document.querySelectorAll(".blocked li");
+
+    todo_tasks.forEach((task) => dragNormalElem(task, "todo"));
+    doing_tasks.forEach((task) => dragNormalElem(task, "doing"));
+    finished_tasks.forEach((task) => dragNormalElem(task, "finished"));
+    blocked_tasks.forEach((task) => dragNormalElem(task, "blocked"));
+  } else {
+    const todo_tasks = document.querySelectorAll(".todo li");
+    const doing_tasks = document.querySelectorAll(".doing li");
+    const finished_tasks = document.querySelectorAll(".finished li");
+    const blocked_tasks = document.querySelectorAll(".blocked li");
+
+    todo_tasks.forEach((task) => dragMobileElem(task, "todo"));
+    doing_tasks.forEach((task) => dragMobileElem(task, "doing"));
+    finished_tasks.forEach((task) => dragMobileElem(task, "finished"));
+    blocked_tasks.forEach((task) => dragMobileElem(task, "blocked"));
   }
 });
