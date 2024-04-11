@@ -33,31 +33,190 @@ const renderCounter = () => {
 
 renderCounter();
 
+const removeFunctionality = (task, status) => {
+  let taskList = JSON.parse(localStorage.getItem(`${status}Tasks`)) || [];
+
+  const category = task.querySelector(".category").textContent;
+  const title_content = task.querySelector(".title_content").textContent;
+  const content = task.querySelector(".content").textContent;
+  const time = task.querySelector(".time").textContent;
+
+  const delete_button = task.querySelector(".Trash");
+  delete_button.style.cursor = "pointer";
+  delete_button.addEventListener("click", () => {
+    taskList = taskList.filter(
+      (task) =>
+        task.category !== category ||
+        task.title_content !== title_content ||
+        task.content !== content ||
+        task.time.trim() !== time.trim()
+    );
+    task.remove();
+    localStorage.setItem(`${status}Tasks`, JSON.stringify(taskList));
+
+    renderCounter();
+  });
+};
+
 const renderRemoveButton = (status) => {
   let taskList = JSON.parse(localStorage.getItem(`${status}Tasks`)) || [];
   const tasks = document.querySelectorAll(`.${status} li`);
 
   tasks.forEach((task) => {
-    const category = task.querySelector(".category").textContent;
-    const title_content = task.querySelector(".title_content").textContent;
-    const content = task.querySelector(".content").textContent;
-    const time = task.querySelector(".time").textContent;
+    removeFunctionality(task, status);
+  });
+};
 
-    const delete_button = task.querySelector(".Trash");
-    delete_button.style.cursor = "pointer";
-    delete_button.addEventListener("click", () => {
+const editFunctionality = (task, status) => {
+  if (
+    document.querySelector(".new_task_pop_up") ||
+    document.querySelector(".edit_pop_up")
+  ) {
+    return;
+  }
+
+  let taskList =
+    JSON.parse(localStorage.getItem(`${status}Tasks`)).filter(
+      (task) => task !== null
+    ) || [];
+  const edit_button = task.querySelector(".Edit");
+  
+  // Navigate and display menu
+  const main = document.querySelector("main");
+  main.insertAdjacentHTML("beforeend", editPopUp(status));
+  const edit_pop_up = document.querySelector(".edit_pop_up");
+  edit_pop_up.style.display = "flex";
+
+  // Getting the value for input fields
+  const category = edit_pop_up.querySelector(".category_input");
+  const title_content = edit_pop_up.querySelector(".title_input");
+  const content = edit_pop_up.querySelector(".content_input");
+  const time = edit_pop_up.querySelector(".time_input");
+
+  // Getting the original value of each tasks
+  const category_value = task.querySelector(".category").textContent;
+  const title_content_value = task.querySelector(".title_content").textContent;
+  const content_value = task.querySelector(".content").textContent;
+  const time_value = task
+    .querySelector(".time")
+    .textContent.trim()
+    .split(" ")
+    .join("T");
+
+  // Setting the original value of each tasks
+  category.value = category_value;
+  title_content.value = title_content_value;
+  content.value = content_value;
+  time.value = time_value;
+
+  // Submitting the changes
+  const submit_button = document.querySelector(".edit_pop_up .sumbit");
+  submit_button.style.cursor = "pointer";
+  submit_button.addEventListener("click", () => {
+    const validation = checkValidInput(edit_pop_up);
+    if (!validation) {
+      return;
+    }
+
+    const new_category = edit_pop_up.querySelector(".category_input").value;
+    const new_title_content = edit_pop_up.querySelector(".title_input").value;
+    const new_content = edit_pop_up.querySelector(".content_input").value;
+    const new_time = edit_pop_up
+      .querySelector(".time_input")
+      .value.split("T")
+      .join(" ");
+    const new_status = edit_pop_up
+      .querySelector(".status_state input:checked")
+      .id.split("_")[0];
+
+    task.querySelector(".category").textContent = new_category;
+    task.querySelector(".title_content").textContent = new_title_content;
+    task.querySelector(".content").textContent = new_content;
+    task.querySelector(".time .time_content").textContent = new_time;
+
+    taskList = taskList.map((task) => {
+      if (
+        task.category === category_value &&
+        task.title_content === title_content_value &&
+        task.content === content_value &&
+        task.time === time_value.split("T").join(" ")
+      ) {
+        task.category = edit_pop_up.querySelector(".category_input").value;
+        task.title_content = edit_pop_up.querySelector(".title_input").value;
+        task.content = edit_pop_up.querySelector(".content_input").value;
+        task.time = edit_pop_up
+          .querySelector(".time_input")
+          .value.split("T")
+          .join(" ");
+      }
+      return task;
+    });
+
+    if (status !== new_status) {
       taskList = taskList.filter(
         (task) =>
-          task.category !== category ||
-          task.title_content !== title_content ||
-          task.content !== content ||
-          task.time.trim() !== time.trim()
+          task.category !== category_value ||
+          task.title_content !== title_content_value ||
+          task.content !== content_value ||
+          task.time !== time_value.split("T").join(" ")
       );
+      const new_status_taskList =
+        JSON.parse(localStorage.getItem(`${new_status}Tasks`)) || [];
+
+      new_status_taskList.push({
+        category: new_category,
+        title_content: new_title_content,
+        content: new_content,
+        time: new_time,
+      });
       task.remove();
       localStorage.setItem(`${status}Tasks`, JSON.stringify(taskList));
+      localStorage.setItem(
+        `${new_status}Tasks`,
+        JSON.stringify(new_status_taskList)
+      );
+      edit_pop_up.remove();
 
+      // Render new status task
+      const new_status_list = document.querySelector(`.${new_status} ul`);
+      const new_task = Task(
+        new_category,
+        new_title_content,
+        new_content,
+        new_time
+      );
+      new_status_list.insertAdjacentHTML("beforeend", new_task);
+      renderRemoveButton(new_status);
+      renderEditButtons(new_status);
       renderCounter();
-    });
+
+      const new_status_tasks = document.querySelectorAll(`.${new_status} li`);
+      new_status_tasks.forEach((task) => dragNormalElem(task, new_status));
+
+      return;
+    }
+
+    localStorage.setItem(`${status}Tasks`, JSON.stringify(taskList));
+    edit_pop_up.remove();
+  });
+
+  // Closing the pop up
+  document.addEventListener("click", (e) => {
+    if (!edit_pop_up.contains(e.target) && e.target !== edit_button) {
+      edit_pop_up.remove();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      edit_pop_up.remove();
+    }
+  });
+
+  const close_button = document.querySelector(".edit_pop_up .close");
+  close_button.style.cursor = "pointer";
+  close_button.addEventListener("click", () => {
+    edit_pop_up.remove();
   });
 };
 
@@ -78,155 +237,7 @@ const renderEditButtons = (status) => {
     const edit_button = task.querySelector(".Edit");
     edit_button.style.cursor = "pointer";
     edit_button.addEventListener("click", async () => {
-      if (
-        document.querySelector(".new_task_pop_up") ||
-        document.querySelector(".edit_pop_up")
-      ) {
-        return;
-      }
-
-      // Navigate and display menu
-      const main = document.querySelector("main");
-      main.insertAdjacentHTML("beforeend", editPopUp(status));
-      const edit_pop_up = document.querySelector(".edit_pop_up");
-      edit_pop_up.style.display = "flex";
-
-      // Getting the value for input fields
-      const category = edit_pop_up.querySelector(".category_input");
-      const title_content = edit_pop_up.querySelector(".title_input");
-      const content = edit_pop_up.querySelector(".content_input");
-      const time = edit_pop_up.querySelector(".time_input");
-
-      // Getting the original value of each tasks
-      const category_value = task.querySelector(".category").textContent;
-      const title_content_value =
-        task.querySelector(".title_content").textContent;
-      const content_value = task.querySelector(".content").textContent;
-      const time_value = task
-        .querySelector(".time")
-        .textContent.trim()
-        .split(" ")
-        .join("T");
-
-      // Setting the original value of each tasks
-      category.value = category_value;
-      title_content.value = title_content_value;
-      content.value = content_value;
-      time.value = time_value;
-
-      // Submitting the changes
-      const submit_button = document.querySelector(".edit_pop_up .sumbit");
-      submit_button.style.cursor = "pointer";
-      submit_button.addEventListener("click", () => {
-        const validation = checkValidInput(edit_pop_up);
-        if (!validation) {
-          return;
-        }
-
-        const new_category = edit_pop_up.querySelector(".category_input").value;
-        const new_title_content =
-          edit_pop_up.querySelector(".title_input").value;
-        const new_content = edit_pop_up.querySelector(".content_input").value;
-        const new_time = edit_pop_up
-          .querySelector(".time_input")
-          .value.split("T")
-          .join(" ");
-        const new_status = edit_pop_up
-          .querySelector(".status_state input:checked")
-          .id.split("_")[0];
-
-        task.querySelector(".category").textContent = new_category;
-        task.querySelector(".title_content").textContent = new_title_content;
-        task.querySelector(".content").textContent = new_content;
-        task.querySelector(".time .time_content").textContent = new_time;
-
-        taskList = taskList.map((task) => {
-          if (
-            task.category === category_value &&
-            task.title_content === title_content_value &&
-            task.content === content_value &&
-            task.time === time_value.split("T").join(" ")
-          ) {
-            task.category = edit_pop_up.querySelector(".category_input").value;
-            task.title_content =
-              edit_pop_up.querySelector(".title_input").value;
-            task.content = edit_pop_up.querySelector(".content_input").value;
-            task.time = edit_pop_up
-              .querySelector(".time_input")
-              .value.split("T")
-              .join(" ");
-          }
-          return task;
-        });
-
-        if (status !== new_status) {
-          taskList = taskList.filter(
-            (task) =>
-              task.category !== category_value ||
-              task.title_content !== title_content_value ||
-              task.content !== content_value ||
-              task.time !== time_value.split("T").join(" ")
-          );
-          const new_status_taskList =
-            JSON.parse(localStorage.getItem(`${new_status}Tasks`)) || [];
-
-          new_status_taskList.push({
-            category: new_category,
-            title_content: new_title_content,
-            content: new_content,
-            time: new_time,
-          });
-          task.remove();
-          localStorage.setItem(`${status}Tasks`, JSON.stringify(taskList));
-          localStorage.setItem(
-            `${new_status}Tasks`,
-            JSON.stringify(new_status_taskList)
-          );
-          edit_pop_up.remove();
-
-          // Render new status task
-          const new_status_list = document.querySelector(`.${new_status} ul`);
-          const new_task = Task(
-            new_category,
-            new_title_content,
-            new_content,
-            new_time
-          );
-          new_status_list.insertAdjacentHTML("beforeend", new_task);
-          renderRemoveButton(new_status);
-          renderEditButtons(new_status);
-          renderCounter();
-
-          const new_status_tasks = document.querySelectorAll(
-            `.${new_status} li`
-          );
-          new_status_tasks.forEach((task) => dragNormalElem(task, new_status));
-
-          return;
-        }
-
-        localStorage.setItem(`${status}Tasks`, JSON.stringify(taskList));
-        edit_pop_up.remove();
-      });
-
-      // Closing the pop up
-      document.addEventListener("click", (e) => {
-        if (!edit_pop_up.contains(e.target) && e.target !== edit_button) {
-          edit_pop_up.remove();
-        }
-      });
-
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          edit_pop_up.remove();
-        }
-      });
-
-      const close_button = document.querySelector(".edit_pop_up .close");
-      close_button.style.cursor = "pointer";
-      close_button.addEventListener("click", () => {
-        edit_pop_up.remove();
-      });
+      editFunctionality(task, status);
     });
   });
 };
@@ -412,11 +423,14 @@ const dragNormalElem = (elem, status) => {
 
     elem.onmousedown = (event) => {
       if (elem.querySelector(".edit").contains(event.target)) {
-        return;
+        if (elem.querySelector(".Edit").contains(event.target)) {
+          return editFunctionality(elem, status);
+        } else {
+          return removeFunctionality(elem);
+        }
       }
       return mouseDown(event);
     };
-    // elem.onmousedown = mouseDown;
 
     elem.style.backgroundColor = "white";
 
@@ -532,7 +546,13 @@ const dragNormalElem = (elem, status) => {
 
       // Reset mouseDown properties
       const new_status_tasks = document.querySelectorAll(`.${new_status} li`);
-      new_status_tasks.forEach((task) => dragNormalElem(task, new_status));
+      new_status_tasks.forEach((task) => {
+        if (window.innerWidth >= 1024) {
+          dragNormalElem(task, new_status);
+        } else {
+          dragMobileElem(task, new_status);
+        }
+      });
 
       // Render buttons
       renderCounter();
@@ -549,15 +569,14 @@ const dragNormalElem = (elem, status) => {
     }
   };
 
-  dragElement(elem);
+  elem.mouseDown = dragElement(elem);
   renderCounter();
   renderEditButtons(status);
   renderRemoveButton(status);
 };
 
 const dragMobileElem = (elem, status) => {
-  // Wipe normal drag function
-  elem.mouseDown = null;
+  elem.onmousedown = null;
 };
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -570,7 +589,7 @@ window.addEventListener("DOMContentLoaded", () => {
     todo_tasks.forEach((task) => dragNormalElem(task, "todo"));
     doing_tasks.forEach((task) => dragNormalElem(task, "doing"));
     finished_tasks.forEach((task) => dragNormalElem(task, "finished"));
-    blocked_tasks.forEach((task) => dragNormalElem(task, "blocked")); 
+    blocked_tasks.forEach((task) => dragNormalElem(task, "blocked"));
   } else {
     const todo_tasks = document.querySelectorAll(".todo li");
     const doing_tasks = document.querySelectorAll(".doing li");
@@ -595,13 +614,12 @@ window.addEventListener("resize", () => {
     doing_tasks.forEach((task) => dragNormalElem(task, "doing"));
     finished_tasks.forEach((task) => dragNormalElem(task, "finished"));
     blocked_tasks.forEach((task) => dragNormalElem(task, "blocked"));
-  }
-  else{
+  } else {
     const todo_tasks = document.querySelectorAll(".todo li");
     const doing_tasks = document.querySelectorAll(".doing li");
     const finished_tasks = document.querySelectorAll(".finished li");
     const blocked_tasks = document.querySelectorAll(".blocked li");
-    
+
     todo_tasks.forEach((task) => dragMobileElem(task, "todo"));
     doing_tasks.forEach((task) => dragMobileElem(task, "doing"));
     finished_tasks.forEach((task) => dragMobileElem(task, "finished"));
