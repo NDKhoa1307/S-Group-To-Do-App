@@ -429,7 +429,7 @@ main li .time .time_content {
   }
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1024px) and (min-width: 500px) {
   .container {
     overflow-y: visible;
   }
@@ -495,7 +495,7 @@ main li .time .time_content {
   }
 
   .new_task_pop_up .close{
-    transform: scale(1.2);
+    transform: scale(2);
   }
 
   .edit_pop_up header{
@@ -517,5 +517,148 @@ main li .time .time_content {
 
   .edit_pop_up .status_state{
       gap: 5px;
+  }
+}
+
+@media screen and (max-width: 500px){
+  header {
+    min-height: 180px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+  }
+
+  header .adding_new_task {
+    margin: 0;
+    border: 1px solid black;
+    padding: 10px 20px;
+
+    border-radius: 3px;
+    padding-bottom: 15px;
+
+    transform: scale(0.85);
+  }
+
+  main {
+    display: block;
+  }
+
+  main > div {
+    width: 100%;
+    max-width: 100%;
+    max-height: fit-content;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    margin-bottom: 20px;
+  }
+
+  main .todo {
+    width: 100%;
+  }
+
+  main > div li {
+    max-width: 100%;
+    min-height: 160px;
+  }
+
+  main li .bottom_section .content span {
+    max-width: 100%;
+    overflow-y: scroll;
+  }
+
+  .new_task_pop_up{
+    top: 0;
+    left: 0;
+  }
+
+  .new_task_pop_up header{
+    min-height: 80px;
+    width: 80%;
+  }
+
+  .new_task_pop_up *{
+    transform: scale(0.8);
+  }
+
+  .new_task_pop_up input[type="text"]{
+    margin: 5px;
+  }
+
+  .new_task_pop_up .close{
+    transform: scale(2);
+  }
+
+  .edit_pop_up{
+    top: 0;
+    left: 0;
+  }
+
+  .edit_pop_up header{
+    min-height: 70px;
+    width: 80%;
+  }
+
+  .edit_pop_up *{
+    transform: scale(0.9);
+  }
+
+  .edit_pop_up input[type="text"]{
+    margin: 3px;
+  }
+
+  .edit_pop_up .close{
+    transform: scale(1.2);
+  }
+
+  .edit_pop_up .status_state{
+      gap: 5px;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  .new_task_pop_up{
+    top: 0;
+    left: 0;
+
+    transform: scale(0.9);
+  }
+
+  .new_task_pop_up header{
+    min-height: 80px;
+    width: fit-content;
+  }
+
+  .new_task_pop_up .close{
+    top: 0;
+    right: -50px;
+  }
+
+  .new_task_pop_up *{
+    transform: scale(0.6);
+  }
+
+  .edit_pop_up{
+    top: 0;
+    left: 0;
+
+    transform: scale(0.9);
+  }
+
+  .edit_pop_up header{
+    min-height: 70px;
+    width: fit-content;
+  }
+
+  .edit_pop_up .close{
+    top: 0;
+    right: -50px;
+  }
+
+  .edit_pop_up *{
+    transform: scale(0.6);
   }
 }

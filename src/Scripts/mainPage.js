@@ -194,13 +194,12 @@ const editFunctionality = (task, status) => {
       if (window.innerWidth >= 1024) {
         new_status_tasks.forEach((task) => {
           dragNormalElem(task, new_status);
-        })
-      }
-      else{
+        });
+      } else {
         new_status_tasks.forEach((task) => {
           dragMobileElem(task, new_status);
         });
-      };
+      }
 
       return;
     }
@@ -433,9 +432,9 @@ new_task_button.addEventListener("click", async () => {
 const dragNormalElem = (elem, status) => {
   elem.onmousedown = (event) => {
     if (elem.querySelector(".Edit").contains(event.target)) {
-      return editFunctionality(elem, status);
+      return () => editFunctionality(elem, status);
     } else if (elem.querySelector(".Trash").contains(event.target)) {
-      return removeFunctionality(elem);
+      return () => removeFunctionality(elem);
     } else {
       return mouseDown(event);
     }
@@ -591,7 +590,7 @@ const dragMobileElem = (elem, status) => {
 };
 
 window.addEventListener("DOMContentLoaded", () => {
-  if (window.innerWidth >= 1024) {
+  if (window.innerWidth > 1024) {
     const todo_tasks = document.querySelectorAll(".todo li");
     const doing_tasks = document.querySelectorAll(".doing li");
     const finished_tasks = document.querySelectorAll(".finished li");
@@ -615,7 +614,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("resize", () => {
-  if (window.innerWidth >= 1024) {
+  if (window.innerWidth > 1024) {
     const todo_tasks = document.querySelectorAll(".todo li");
     const doing_tasks = document.querySelectorAll(".doing li");
     const finished_tasks = document.querySelectorAll(".finished li");
