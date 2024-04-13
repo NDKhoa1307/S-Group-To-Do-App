@@ -166,7 +166,7 @@ body {
   padding: 0px 7px;
 }
 
-.login_form .remember {
+.login_form .show_password {
   margin: 10px 0px;
   margin-top: 20px;
   display: flex;
@@ -174,7 +174,7 @@ body {
   gap: 4px;
 }
 
-.login_form .remember label {
+.login_form .show_password label {
   font-family: "Roboto", sans-serif;
   font-size: 12px;
   font-weight: 400;
@@ -184,7 +184,7 @@ body {
   color: rgba(0, 0, 0, 0.65);
 }
 
-.login_form .remember input {
+.login_form .show_password input {
   accent-color: rgb(0, 166, 218);
   width: 16px;
   height: 16px;

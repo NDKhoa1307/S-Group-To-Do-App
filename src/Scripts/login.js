@@ -49,6 +49,26 @@ password_input.addEventListener("blur", () => {
   password_flag = validate_password();
 });
 
+const show_password = document.querySelector(".show_password");
+show_password.addEventListener("click", () => {
+  const show_password_input = document.querySelector(".show_password input");
+  const password_input = document.querySelector(".password input");
+  if (show_password_input.checked) {
+    password_input.type = "text";
+  } else {
+    password_input.type = "password";
+  }
+});
+
+(() => {
+  const show_password_input = document.querySelector(".show_password input");
+  if (show_password_input.checked) {
+    password_input.type = "text";
+  } else {
+    password_input.type = "password";
+  }
+})();
+
 const login_button = document.querySelector(".login_button");
 login_button.addEventListener("click", async () => {
   email_flag = validate_email();
@@ -68,12 +88,11 @@ login_button.addEventListener("click", async () => {
       }),
     });
 
-    
     const data = await response.json();
     const message = data.message;
     const status = data.status;
 
-    if (status == 'error'){
+    if (status == "error") {
       const status = document.querySelector(".login_button span");
       status.innerHTML = "Wrong username or password!";
 
@@ -82,9 +101,8 @@ login_button.addEventListener("click", async () => {
 
       email_input.style.border = "1px solid red";
       password_input.style.border = "1px solid red";
-    }
-    else{
-      window.location.href = './mainPage.html'
+    } else {
+      window.location.href = "./mainPage.html";
     }
   }
 });

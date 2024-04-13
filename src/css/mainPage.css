@@ -483,7 +483,7 @@ main li .time .time_content {
 
   .new_task_pop_up header{
     min-height: 80px;
-    min-width: 100%;
+    width: 80%;
   }
 
   .new_task_pop_up *{
@@ -500,7 +500,7 @@ main li .time .time_content {
 
   .edit_pop_up header{
     min-height: 70px;
-    min-width: 100%;
+    width: 80%;
   }
 
   .edit_pop_up *{
